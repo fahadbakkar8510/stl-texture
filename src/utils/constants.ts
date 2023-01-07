@@ -5,8 +5,7 @@ export const lightAHex = 0xffffff
 export const lightBHex = 0x002288
 export const lightCHex = 0x222222
 
-// export const backColor = new THREE.Color(0x666666)
-export const backColor = new THREE.Color(0xff0000)
+export const backColor = new THREE.Color(0x666666)
 
 export const normalVecX = new THREE.Vector3(1, 0, 0)
 export const normalVecY = new THREE.Vector3(0, 1, 0)

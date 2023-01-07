@@ -133,8 +133,10 @@ export class ThreeWorld implements ThreeInterface {
     } else {
       const stlMaterial = new THREE.MeshPhongMaterial({
         map: this.textureLoader.load(textureUrls[type]),
-        // color: 0xf00,
         side: THREE.DoubleSide,
+        // color: 0xf00,
+        // transparent: true,
+        // opacity: 0.5,
       })
       stlMesh = getStlMesh(stlGeo, stlMaterial)
       this.scene.add(stlMesh)
@@ -150,7 +152,6 @@ export class ThreeWorld implements ThreeInterface {
         tempMatrix2.makeRotationAxis(normalVecX, -Math.PI / 2)
       )
     )
-
   }
 
   animate() {
