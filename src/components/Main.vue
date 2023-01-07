@@ -23,15 +23,18 @@ async function init() {
 
   // Add terrains to description world
   descWorld.addTerrain('walnut')
-  descWorld.addTerrain('cherry')
-  descWorld.addTerrain('yellow')
+  // descWorld.addTerrain('cherry')
+  // descWorld.addTerrain('yellow')
 
   // Generate three world
   const modelPath = 'models/example.stl'
   const descTerrains = descWorld.getTerrains()
-  descTerrains.forEach(descTerrain => {
-    threeWorld.addStlMesh(modelPath, descTerrain.id, descTerrain.type)
+
+  for (let i = 0; i < descTerrains.length; i++) {
+    await threeWorld.addStlMesh(modelPath, descTerrains[i].id, descTerrains[i].type)
     threeWorld.updateStartPos()
-  })
+  }
+
+  // threeWorld.updateDragControls()
 }
 </script>

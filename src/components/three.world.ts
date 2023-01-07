@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
-import { backColor, fogHex, fogDensity, lightAHex, lightBHex, lightCHex, acidHexStr, tempMatrix1, tempColor1, bondSocketHex, socketHex, ballHex, startPos, tempMultiMatrix1, tempMatrix2, normalVecZ, cameraPos, zeroVec, terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight, terrainWidthExtents, terrainDepthExtents, textureLoader, textureUrls } from '../utils/constants';
+import { backColor, fogHex, fogDensity, lightAHex, lightBHex, lightCHex, tempMatrix1, startPos, tempMultiMatrix1, tempMatrix2, normalVecX, cameraPos, zeroVec, terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight, terrainWidthExtents, terrainDepthExtents, textureLoader, textureUrls } from '../utils/constants';
 import type { PhysicsInterface } from './physics.world'
 import { DragControls } from './drag.controls'
 import type { DynamicInstMesh } from '../utils/types'
@@ -90,7 +90,7 @@ export class ThreeWorld implements ThreeInterface {
     terrainMesh.receiveShadow = true;
     terrainMesh.castShadow = true;
     this.scene.add(terrainMesh);
-    textureLoader.load('grid.png', function (texture) {
+    textureLoader.load('textures/grid.png', function (texture) {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(terrainWidth - 1, terrainDepth - 1);
@@ -104,19 +104,22 @@ export class ThreeWorld implements ThreeInterface {
 
     // Stl loader
     this.stlLoadingManager = new THREE.LoadingManager(
-      () => { console.log('onLoad') },
-      (url: string, loaded: number, total: number) => { console.log('onProgress: ', 'url => ', url, 'loaded => ', loaded, 'total => ', total) },
-      (url: string) => { console.log('onError: ', url) },
+      // () => { console.log('onLoad') },
+      // (url: string, loaded: number, total: number) => { console.log('onProgress: ', 'url => ', url, 'loaded => ', loaded, 'total => ', total) },
+      // (url: string) => { console.log('onError: ', url) },
     )
     this.stlLoader = new STLLoader(this.stlLoadingManager)
 
     // Texture loader
     this.textureLoadingManager = new THREE.LoadingManager(
-      () => { console.log('onLoad') },
-      (url: string, loaded: number, total: number) => { console.log('onProgress: ', 'url => ', url, 'loaded => ', loaded, 'total => ', total) },
-      (url: string) => { console.log('onError: ', url) },
+      // () => { console.log('onLoad') },
+      // (url: string, loaded: number, total: number) => { console.log('onProgress: ', 'url => ', url, 'loaded => ', loaded, 'total => ', total) },
+      // (url: string) => { console.log('onError: ', url) },
     )
     this.textureLoader = new THREE.TextureLoader(this.textureLoadingManager)
+
+    // Axes helper
+    // this.scene.add(new THREE.AxesHelper(100))
   }
 
   async addStlMesh(modelPath: string, id: string, type: string): Promise<void> {
@@ -132,12 +135,22 @@ export class ThreeWorld implements ThreeInterface {
         map: this.textureLoader.load(textureUrls[type]),
         side: THREE.DoubleSide,
       })
-      const stlMesh = getStlMesh(stlGeo, stlMaterial)
+      stlMesh = getStlMesh(stlGeo, stlMaterial)
       stlMesh.type = type
       this.scene.add(stlMesh)
+      stlMesh.userData.physicsBodies = this.physicsWorld.addMesh(id, stlMesh, 1)
       this.stlInstMeshes.set(type, stlMesh)
       this.instIndexes.set(id, 0)
     }
+
+    stlMesh.setMatrixAt(
+      index,
+      tempMultiMatrix1.multiplyMatrices(
+        tempMatrix1.setPosition(this.startPos.clone()),
+        tempMatrix2.makeRotationAxis(normalVecX, -Math.PI / 2)
+      )
+    )
+
   }
 
   animate() {
@@ -148,14 +161,14 @@ export class ThreeWorld implements ThreeInterface {
   }
 
   updateStartPos() {
-    this.startPos.set(startPos.x, startPos.y, this.startPos.z + 0.4)
+    this.startPos.set(startPos.x, startPos.y, this.startPos.z - 6)
   }
 
   updateDragControls() {
-    const arrResidueInstMesh: Array<DynamicInstMesh> = []
+    const arrStlInstMesh: Array<DynamicInstMesh> = []
     this.stlInstMeshes.forEach(instMesh => {
-      arrResidueInstMesh.push(instMesh)
+      arrStlInstMesh.push(instMesh)
     })
-    this.dragControls.setObjects(arrResidueInstMesh)
+    this.dragControls.setObjects(arrStlInstMesh)
   }
 }
