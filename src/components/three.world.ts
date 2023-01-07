@@ -136,9 +136,8 @@ export class ThreeWorld implements ThreeInterface {
         side: THREE.DoubleSide,
       })
       stlMesh = getStlMesh(stlGeo, stlMaterial)
-      stlMesh.type = type
       this.scene.add(stlMesh)
-      stlMesh.userData.physicsBodies = this.physicsWorld.addMesh(id, stlMesh, 1)
+      // stlMesh.userData.physicsBodies = this.physicsWorld.addMesh(id, stlMesh, 1)
       this.stlInstMeshes.set(type, stlMesh)
       this.instIndexes.set(id, 0)
     }
