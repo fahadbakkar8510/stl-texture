@@ -1,7 +1,7 @@
 <script setup lang='ts' >
-import Xlink from './components/Xlink.vue'
+import Main from './components/Main.vue'
 </script>
 
 <template>
-  <Xlink />
+  <Main />
 </template>

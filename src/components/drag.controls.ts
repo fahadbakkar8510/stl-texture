@@ -1,6 +1,6 @@
 import type Ammo from 'ammojs-typed'
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { scalingFactor } from './constants'
+import { scalingFactor } from '../utils/constants'
 import type { PhysicsInterface } from './physics.world'
 import {
   EventDispatcher,
