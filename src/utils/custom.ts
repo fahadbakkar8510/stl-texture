@@ -60,7 +60,7 @@ export const boxUnwrapUVs = (geometry: any) => {
       new THREE.Vector2(vc[uAxis], vc[vAxis]),
     ]
   }
-  // geometry.elementsNeedUpdate = geometry.verticesNeedUpdate = true;
+  geometry.elementsNeedUpdate = geometry.verticesNeedUpdate = true;
 }
 
 export const planeUnwrapUVs = (geometry: any) => {
