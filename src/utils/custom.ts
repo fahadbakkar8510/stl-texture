@@ -1,4 +1,5 @@
-import type * as THREE from 'three'
+import * as THREE from 'three'
+import { DynamicInstMesh } from './types';
 
 export const generateHeight = (width: number, depth: number, minHeight: number, maxHeight: number) => {
   // Generates the height data (a sine wave)
@@ -24,5 +25,12 @@ export const generateHeight = (width: number, depth: number, minHeight: number, 
   return data;
 }
 
-export const getStlMesh = (geometry: THREE.BufferGeometry, material: THREE.MeshPhongMaterial) => {
+export const getStlMesh = (geometry: any, material: THREE.MeshPhongMaterial, cnt: number = 1): DynamicInstMesh => {
+  if (cnt < 1) cnt = 1
+  let rawGeometry = geometry
+  if (geometry.isBufferGeometry) {
+    rawGeometry = new THREE.Geometry().fromBufferGeometry(geometry)
+  }
+  const instStlMesh = new DynamicInstMesh(rawGeometry, material, cnt)
+  return instStlMesh
 }

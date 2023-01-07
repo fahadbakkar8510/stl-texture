@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import {Terrain, Terrains} from '../utils/types'
+import { Terrain, Terrains } from '../utils/types'
 
 export interface DescInterface {
   addTerrain(type: string): void

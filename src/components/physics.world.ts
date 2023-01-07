@@ -96,7 +96,7 @@ export class PhysicsWorld implements PhysicsInterface {
       case 'PlaneGeometry':
         const heightData: number[] = []
         const { width, height, widthSegments, heightSegments } = geometry.parameters
-        let vertices = geometry.attributes.position.array
+        let vertices = geometry.attributes?.position?.array ?? []
         for (let i = 0, j = 0, l = vertices.length; j < l; i++, j += 3) {
           heightData[i] = vertices[j + 1];
         }

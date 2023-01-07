@@ -35,24 +35,11 @@ export const raycaster = new THREE.Raycaster()
 
 export const gravity = 2
 export const fogDensity = 0.002
-export const residueRadius = 0.1 // for the moment, we'll just have a single common radius. we'll want at least the option to specify radii per amino acid later.
-export const socketRadius = residueRadius / 5
-export const socketLength = residueRadius
-export const crossSocketLength = socketLength * 2
-export const ballRadius = residueRadius / 5 * 2
 
 export const frameRate = 60
 export const friction = 50
 export const linearDamping = .8
 export const rotationDamping = .8
-
-export const residueInstCnt = 10
-export const socketInstCnt = 1000
-export const ballInstCnt = 1000
-
-export const commonResidueMass = 1
-export const commonSocketMass = 1
-export const commonBallMass = 1
 
 export const scalingFactor = 20
 
@@ -64,3 +51,9 @@ export const terrainMaxHeight = 0
 export const terrainMinHeight = 0
 
 export const textureLoader = new THREE.TextureLoader()
+
+export const textureUrls: any = {
+    walnut: 'textures/walnut.jpg',
+    cherry: 'textures/cherry.jpg',
+    yellow: 'textures/yellow.jpg',
+}

@@ -1,15 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
-import { backColor, fogHex, fogDensity, lightAHex, lightBHex, lightCHex, acidHexStr, tempMatrix1, residueInstCnt, socketInstCnt, tempColor1, bondSocketHex, socketHex, ballHex, ballInstCnt, startPos, tempMultiMatrix1, tempMatrix2, normalVecZ, cameraPos, zeroVec, terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight, terrainWidthExtents, terrainDepthExtents, textureLoader } from '../utils/constants';
+import { backColor, fogHex, fogDensity, lightAHex, lightBHex, lightCHex, acidHexStr, tempMatrix1, tempColor1, bondSocketHex, socketHex, ballHex, startPos, tempMultiMatrix1, tempMatrix2, normalVecZ, cameraPos, zeroVec, terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight, terrainWidthExtents, terrainDepthExtents, textureLoader, textureUrls } from '../utils/constants';
 import type { PhysicsInterface } from './physics.world'
 import { DragControls } from './drag.controls'
 import type { DynamicInstMesh } from '../utils/types'
-import { generateHeight } from '../utils/custom'
+import { generateHeight, getStlMesh } from '../utils/custom'
 
 export interface ThreeInterface {
   animate(): void
-  addStlMesh(path: string, id: string, type: string): void
+  addStlMesh(modelPath: string, id: string, type: string): void
   updateStartPos(): void
   updateDragControls(): void
 }
@@ -20,9 +20,13 @@ export class ThreeWorld implements ThreeInterface {
   private camera: THREE.PerspectiveCamera
   private renderer: THREE.WebGLRenderer
   private orbitControls: OrbitControls
-  private dragControls: DragControls | undefined
+  private dragControls: DragControls
   private stlLoadingManager: THREE.LoadingManager
   private stlLoader: STLLoader
+  private textureLoadingManager: THREE.LoadingManager
+  private textureLoader: THREE.TextureLoader
+
+  private instIndexes: Map<string, number> = new Map<string, number>()
   private stlInstMeshes: Map<string, DynamicInstMesh> = new Map<string, DynamicInstMesh>()
   private startPos: THREE.Vector3 = startPos.clone()
 
@@ -74,13 +78,13 @@ export class ThreeWorld implements ThreeInterface {
     const heightData = generateHeight(terrainWidth, terrainDepth, terrainMinHeight, terrainMaxHeight);
     const terrainGeometry = new THREE.PlaneGeometry(terrainWidthExtents, terrainDepthExtents, terrainWidth - 1, terrainDepth - 1);
     terrainGeometry.rotateX(- Math.PI / 2);
-    const terrainVertices = terrainGeometry.attributes.position.array;
     // // For terrain
+    // const terrainVertices = terrainGeometry.attributes.position.array;
     // for (let i = 0, j = 0, l = terrainVertices.length; i < l; i++, j += 3) {
     //   // j + 1 because it is the y component that we modify
     //   terrainVertices[j + 1] = heightData[i];
     // }
-    terrainGeometry.computeVertexNormals();
+    // terrainGeometry.computeVertexNormals();
     const groundMaterial = new THREE.MeshPhongMaterial({ color: 0xC7C7C7 });
     const terrainMesh = new THREE.Mesh(terrainGeometry, groundMaterial);
     terrainMesh.receiveShadow = true;
@@ -105,28 +109,35 @@ export class ThreeWorld implements ThreeInterface {
       (url: string) => { console.log('onError: ', url) },
     )
     this.stlLoader = new STLLoader(this.stlLoadingManager)
+
+    // Texture loader
+    this.textureLoadingManager = new THREE.LoadingManager(
+      () => { console.log('onLoad') },
+      (url: string, loaded: number, total: number) => { console.log('onProgress: ', 'url => ', url, 'loaded => ', loaded, 'total => ', total) },
+      (url: string) => { console.log('onError: ', url) },
+    )
+    this.textureLoader = new THREE.TextureLoader(this.textureLoadingManager)
   }
 
-  async addStlMesh(path: string, id: string, type: string): Promise<void> {
-    const stlGeo = await this.stlLoader.loadAsync(path)
-    console.log('stlGeo: ', stlGeo)
+  async addStlMesh(modelPath: string, id: string, type: string): Promise<void> {
+    const stlGeo = await this.stlLoader.loadAsync(modelPath)
     let stlMesh: DynamicInstMesh | undefined = this.stlInstMeshes.get(type)
     let index = 0
 
-    // if (stlMesh) {
-    //   index = ++stlMesh.additionalIndex
-    //   this.instIndexes.set(id, index)
-    // } else {
-    //   stlMesh = new DynamicInstMesh(
-    //     new THREE.SphereGeometry(info.radius),
-    //     new THREE.MeshStandardMaterial({ map: getTextTexture(info.name, acidHexStr) }),
-    //     residueInstCnt
-    //   )
-    //   stlMesh.name = info.name
-    //   this.scene.add(stlMesh)
-    //   this.stlInstMeshes.set(info.name, stlMesh)
-    //   this.instIndexes.set(info.id, 0)
-    // }
+    if (stlMesh) {
+      index = ++stlMesh.additionalIndex
+      this.instIndexes.set(id, index)
+    } else {
+      const stlMaterial = new THREE.MeshPhongMaterial({
+        map: this.textureLoader.load(textureUrls[type]),
+        side: THREE.DoubleSide,
+      })
+      const stlMesh = getStlMesh(stlGeo, stlMaterial)
+      stlMesh.type = type
+      this.scene.add(stlMesh)
+      this.stlInstMeshes.set(type, stlMesh)
+      this.instIndexes.set(id, 0)
+    }
   }
 
   animate() {
@@ -145,6 +156,6 @@ export class ThreeWorld implements ThreeInterface {
     this.stlInstMeshes.forEach(instMesh => {
       arrResidueInstMesh.push(instMesh)
     })
-    this.dragControls?.setObjects(arrResidueInstMesh)
+    this.dragControls.setObjects(arrResidueInstMesh)
   }
 }
