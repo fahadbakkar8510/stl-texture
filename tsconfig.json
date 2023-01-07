@@ -8,7 +8,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "sourceMap": true,
     "outDir": "public/js",
     "lib": [

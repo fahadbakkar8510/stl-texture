@@ -133,6 +133,7 @@ export class ThreeWorld implements ThreeInterface {
     } else {
       const stlMaterial = new THREE.MeshPhongMaterial({
         map: this.textureLoader.load(textureUrls[type]),
+        // color: 0xf00,
         side: THREE.DoubleSide,
       })
       stlMesh = getStlMesh(stlGeo, stlMaterial)

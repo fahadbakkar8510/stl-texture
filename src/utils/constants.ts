@@ -5,7 +5,8 @@ export const lightAHex = 0xffffff
 export const lightBHex = 0x002288
 export const lightCHex = 0x222222
 
-export const backColor = new THREE.Color(0x666666)
+// export const backColor = new THREE.Color(0x666666)
+export const backColor = new THREE.Color(0xff0000)
 
 export const normalVecX = new THREE.Vector3(1, 0, 0)
 export const normalVecY = new THREE.Vector3(0, 1, 0)
@@ -13,6 +14,7 @@ export const normalVecZ = new THREE.Vector3(0, 0, 1)
 export const startPos = new THREE.Vector3(-3, 0, 0)
 export const cameraPos = new THREE.Vector3(0, 15, 15)
 export const zeroVec = new THREE.Vector3()
+export const zeroVec2 = new THREE.Vector2()
 
 export const tempMultiMatrix1 = new THREE.Matrix4()
 export const tempMatrix1 = new THREE.Matrix4()
