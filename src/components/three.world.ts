@@ -47,8 +47,8 @@ export class ThreeWorld implements ThreeInterface {
     lightB.position.set(-1, -1, -1)
     this.scene.add(lightB)
 
-    const lightC = new THREE.AmbientLight(lightCHex)
-    this.scene.add(lightC)
+    // const lightC = new THREE.AmbientLight(lightCHex)
+    // this.scene.add(lightC)
 
     // Camera
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -56,7 +56,9 @@ export class ThreeWorld implements ThreeInterface {
     this.camera.lookAt(zeroVec)
 
     // Renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+    })
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.shadowMap.enabled = false
@@ -123,6 +125,8 @@ export class ThreeWorld implements ThreeInterface {
   }
 
   async addStlMesh(modelPath: string, id: string, type: string): Promise<void> {
+    console.log('addStlMesh')
+
     const stlGeo = await this.stlLoader.loadAsync(modelPath)
     let stlMesh: DynamicInstMesh | undefined = this.stlInstMeshes.get(type)
     let index = 0
@@ -131,12 +135,10 @@ export class ThreeWorld implements ThreeInterface {
       index = ++stlMesh.additionalIndex
       this.instIndexes.set(id, index)
     } else {
-      const stlMaterial = new THREE.MeshPhongMaterial({
+      // const stlMaterial = new THREE.MeshPhongMaterial({
+      const stlMaterial = new THREE.MeshBasicMaterial({
         map: this.textureLoader.load(textureUrls[type]),
         side: THREE.DoubleSide,
-        // color: 0xf00,
-        // transparent: true,
-        // opacity: 0.5,
       })
       stlMesh = getStlMesh(stlGeo, stlMaterial)
       this.scene.add(stlMesh)

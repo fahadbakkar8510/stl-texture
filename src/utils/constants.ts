@@ -3,7 +3,7 @@ import * as THREE from 'three'
 export const fogHex = 0x001f3f
 export const lightAHex = 0xffffff
 export const lightBHex = 0x002288
-export const lightCHex = 0x222222
+export const lightCHex = 0xffffff
 
 export const backColor = new THREE.Color(0x666666)
 
